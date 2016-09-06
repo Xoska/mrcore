@@ -1,0 +1,32 @@
+package pfe.com.mrcore.clientapi.dto;
+
+public class City {
+
+    private Integer idCity;
+    private State state;
+    private String name;
+
+    public Integer getIdCity() {
+        return idCity;
+    }
+
+    public void setIdCity(Integer idCity) {
+        this.idCity = idCity;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}

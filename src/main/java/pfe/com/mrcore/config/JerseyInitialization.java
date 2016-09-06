@@ -1,6 +1,6 @@
 package pfe.com.mrcore.config;
 
-import pfe.com.mrcore.core.service.AuthenticationService;
+import pfe.com.mrcore.core.service.SessionService;
 import pfe.com.mrcore.core.service.ProfileService;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -11,6 +11,6 @@ public class JerseyInitialization extends ResourceConfig {
         register(CORSResponseFilter.class);
 
         register(ProfileService.class);
-        register(AuthenticationService.class);
+        register(SessionService.class);
     }
 }

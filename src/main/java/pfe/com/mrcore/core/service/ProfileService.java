@@ -1,8 +1,10 @@
 package pfe.com.mrcore.core.service;
 
 import pfe.com.mrcore.clientapi.dto.Profile;
+import pfe.com.mrcore.clientapi.dto.Session;
 import pfe.com.mrcore.clientapi.service.ProfileAPIService;
 import pfe.com.mrcore.core.model.ProfileEntity;
+import pfe.com.mrcore.core.service.SessionService;
 import pfe.com.mrcore.core.repository.ProfileRepository;
 import pfe.com.mrcore.core.utils.CustomWebExceptionHandler;
 import org.apache.commons.lang3.Validate;
@@ -10,6 +12,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -21,7 +24,12 @@ public class ProfileService implements ProfileAPIService {
     private ProfileRepository profileRepository;
 
     @Autowired
+    private SessionService sessionService;
+
+    @Autowired
     private Mapper mapper;
+
+    private static final Integer ROLE_REQUIRED_PROFILE = 1;
 
     @Override
     @Transactional
@@ -37,16 +45,19 @@ public class ProfileService implements ProfileAPIService {
         ProfileEntity profileEntity = mapper.map(profile, ProfileEntity.class);
 
         profileEntity.setCreationDate(new Date());
+        profileEntity.setLastModificationDate(new Date());
 
         return mapper.map(profileRepository.save(profileEntity), Profile.class);
     }
 
     @Override
     @Transactional
-    public Profile update(Integer profileId, Profile profile) {
+    public Profile update(Integer profileId, Profile profile, Session session) {
 
         Validate.notNull(profileId, "Missing mandatory parameter [profileId]");
         Validate.notNull(profile, "Empty body [profile]");
+
+        sessionService.isSessionValid(session, profileId, ROLE_REQUIRED_PROFILE);
 
         ProfileEntity oldProfile = profileRepository.findOne(profileId);
 
@@ -65,9 +76,11 @@ public class ProfileService implements ProfileAPIService {
 
     @Override
     @Transactional
-    public Profile getProfile(Integer profileId) {
+    public Profile getProfile(Integer profileId, Session session) {
 
         Validate.notNull(profileId, "Missing mandatory parameter [profileId]");
+
+        sessionService.isSessionValid(session, profileId, ROLE_REQUIRED_PROFILE);
 
         ProfileEntity profileEntity = profileRepository.findOne(profileId);
 
@@ -76,9 +89,11 @@ public class ProfileService implements ProfileAPIService {
 
     @Override
     @Transactional
-    public Response delete(Integer profileId) {
+    public Response delete(Integer profileId, Session session) {
 
         Validate.notNull(profileId, "Missing mandatory parameter [profileId]");
+
+        sessionService.isSessionValid(session, profileId, ROLE_REQUIRED_PROFILE);
 
         try {
 

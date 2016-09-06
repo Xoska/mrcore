@@ -1,5 +1,6 @@
 package pfe.com.mrcore;
 
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import pfe.com.mrcore.config.JerseyInitialization;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "pfe.com.mrcore.core.repository")
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class MrCoreApplication {
 
 	public static void main(String[] args) {
