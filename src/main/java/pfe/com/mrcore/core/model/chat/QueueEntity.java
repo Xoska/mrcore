@@ -1,11 +1,12 @@
 package pfe.com.mrcore.core.model.chat;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "profile")
+@Table(name = "queue")
 public class QueueEntity {
 
     @Id
@@ -17,13 +18,24 @@ public class QueueEntity {
     private Integer idProfile;
 
     @Column(name = "id_city")
-    private List<Integer> idCities;
+    private Integer idCity;
+
+    @ElementCollection
+    @CollectionTable(name = "city_search_queue", joinColumns = {@JoinColumn(name = "id_queue")})
+    @Column(name = "id_city_search")
+    private List<Integer> idsCitySearch = new ArrayList<>();
 
     @Column(name = "id_country")
     private Integer idCountry;
 
-    @Column(name = "is_state")
+    @Column(name = "id_country_search")
+    private Integer idCountrySearch;
+
+    @Column(name = "id_state")
     private Integer idState;
+
+    @Column(name = "id_state_search")
+    private Integer idStateSearch;
 
     @Column(name = "zip_code")
     private String zipCode;
@@ -66,14 +78,6 @@ public class QueueEntity {
 
     public void setIdProfile(Integer idProfile) {
         this.idProfile = idProfile;
-    }
-
-    public Integer getIdCity() {
-        return idCity;
-    }
-
-    public void setIdCity(Integer idCity) {
-        this.idCity = idCity;
     }
 
     public Integer getIdCountry() {
@@ -162,5 +166,37 @@ public class QueueEntity {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Integer getIdCity() {
+        return idCity;
+    }
+
+    public void setIdCity(Integer idCity) {
+        this.idCity = idCity;
+    }
+
+    public List<Integer> getIdsCitySearch() {
+        return idsCitySearch;
+    }
+
+    public void setIdsCitySearch(List<Integer> idsCitySearch) {
+        this.idsCitySearch = idsCitySearch;
+    }
+
+    public Integer getIdCountrySearch() {
+        return idCountrySearch;
+    }
+
+    public void setIdCountrySearch(Integer idCountrySearch) {
+        this.idCountrySearch = idCountrySearch;
+    }
+
+    public Integer getIdStateSearch() {
+        return idStateSearch;
+    }
+
+    public void setIdStateSearch(Integer idStateSearch) {
+        this.idStateSearch = idStateSearch;
     }
 }

@@ -43,13 +43,9 @@ public class ChatService implements ChatAPIService {
     @Autowired
     private IdentifierGenerator identifierGenerator;
 
-    @Autowired
-    private Mapper mapper;
-
     private static final Integer ROLE_REQUIRED_PROFILE = 3;
 
     private static final Map<String, SseBroadcaster> ROOM_SSE_BROADCASTER = new ConcurrentHashMap<>();
-
 
     @Override
     public String search(Integer idProfile, String idSession, Search search) {
@@ -61,12 +57,21 @@ public class ChatService implements ChatAPIService {
 
         Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
 
-        QueueEntity queueEntity = queueRepository.findByIdProfile(idProfile);
+        if (queueRepository.countByIdProfile(idProfile) > 0) {
+
+            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "PROFILE_ALREADY_QUEUED");
+        }
+
+        ProfileEntity profileEntity = profileRepository.findOne(idProfile);
+        QueueEntity queueEntity = queueRepository.searchMatch(search.getIdsCity(), profileEntity.getIdCity(),
+                search.getIdCountry(), profileEntity.getIdCountry(), search.getIdState(), profileEntity.getIdState(),
+                search.getIdSex(), profileEntity.getIdSex(), search.getIdGoal(), search.getAgeMin(), search.getAgeMax(),
+                ageCalculator.getAge(profileEntity.getBirthdayDate()));
 
         if (queueEntity == null) {
 
             String identifier = identifierGenerator.nextId();
-            queueEntity = buildQueueEntity(identifier, idProfile, search);
+            queueEntity = buildQueueEntity(identifier, profileEntity, search);
 
             queueRepository.save(queueEntity);
         }
@@ -85,6 +90,8 @@ public class ChatService implements ChatAPIService {
         }
 
         Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
+
+        queueRepository.deleteByIdProfile(idProfile);
 
         EventOutput eventOutput = new EventOutput();
         ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
@@ -116,24 +123,27 @@ public class ChatService implements ChatAPIService {
         ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
     }
 
-    private QueueEntity buildQueueEntity(String idRoom, Integer idProfile, Search search) {
-
-        ProfileEntity profileEntity = profileRepository.findOne(idProfile);
+    private QueueEntity buildQueueEntity(String idRoom, ProfileEntity profileEntity, Search search) {
 
         QueueEntity queueEntity = new QueueEntity();
 
-        queueEntity.setIdProfile(idProfile);
+        queueEntity.setIdProfile(profileEntity.getIdProfile());
         queueEntity.setIdCity(profileEntity.getIdCity());
         queueEntity.setIdCountry(profileEntity.getIdCountry());
         queueEntity.setIdState(profileEntity.getIdState());
         queueEntity.setZipCode(profileEntity.getZipCode());
         queueEntity.setIdSex(profileEntity.getIdSex());
+        queueEntity.setAge(ageCalculator.getAge(profileEntity.getBirthdayDate()));
+
+        queueEntity.setIdsCitySearch(search.getIdsCity());
+        queueEntity.setIdStateSearch(search.getIdState());
+        queueEntity.setIdCountrySearch(search.getIdCountry());
         queueEntity.setIdSexSearch(search.getIdSex());
         queueEntity.setIdGoal(search.getIdGoal());
-        queueEntity.setIdRoom(idRoom);
-        queueEntity.setAge(ageCalculator.getAge(profileEntity.getBirthdayDate()));
         queueEntity.setAgeMinSearch(search.getAgeMin());
         queueEntity.setAgeMaxSearch(search.getAgeMax());
+
+        queueEntity.setIdRoom(idRoom);
         queueEntity.setCreationDate(new Date());
 
         return queueEntity;

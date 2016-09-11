@@ -14,9 +14,8 @@ public class CityEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_state")
-    private StateEntity state;
+    @Column(name = "id_state")
+    private Integer idState;
 
     public Integer getIdCity() {
         return idCity;
@@ -34,11 +33,11 @@ public class CityEntity {
         this.name = name;
     }
 
-    public StateEntity getState() {
-        return state;
+    public Integer getIdState() {
+        return idState;
     }
 
-    public void setState(StateEntity state) {
-        this.state = state;
+    public void setIdState(Integer idState) {
+        this.idState = idState;
     }
 }

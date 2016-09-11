@@ -8,7 +8,7 @@ public class Search {
     private Integer idGoal;
     private Integer idCountry;
     private Integer idState;
-    private Integer idCity;
+    private List<Integer> idsCity;
     private Integer ageMin;
     private Integer ageMax;
 
@@ -44,12 +44,12 @@ public class Search {
         this.idState = idState;
     }
 
-    public Integer getIdCity() {
-        return idCity;
+    public List<Integer> getIdsCity() {
+        return idsCity;
     }
 
-    public void setIdCity(Integer idCity) {
-        this.idCity = idCity;
+    public void setIdsCity(List<Integer> idsCity) {
+        this.idsCity = idsCity;
     }
 
     public Integer getAgeMin() {
