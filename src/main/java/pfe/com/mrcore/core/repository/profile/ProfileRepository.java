@@ -1,6 +1,6 @@
-package pfe.com.mrcore.core.repository;
+package pfe.com.mrcore.core.repository.profile;
 
-import pfe.com.mrcore.core.model.ProfileEntity;
+import pfe.com.mrcore.core.model.profile.ProfileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileRepository extends JpaRepository<ProfileEntity, Integer> {

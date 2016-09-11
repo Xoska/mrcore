@@ -1,4 +1,4 @@
-package pfe.com.mrcore.clientapi.dto;
+package pfe.com.mrcore.clientapi.dto.profile;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,9 +13,10 @@ public class Profile implements Serializable {
     private String lastName;
     private String email;
     private String zipCode;
-    private String city;
-    private String country;
-    private Integer sex;
+    private Integer idCity;
+    private Integer idState;
+    private Integer idCountry;
+    private Integer idSex;
     private Date birthdayDate;
     private Date lastModificationDate;
     private Date creationDate;
@@ -100,35 +101,43 @@ public class Profile implements Serializable {
         this.zipCode = zipCode;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
     public Date getBirthdayDate() {
         return birthdayDate;
     }
 
     public void setBirthdayDate(Date birthdayDate) {
         this.birthdayDate = birthdayDate;
+    }
+
+    public Integer getIdCity() {
+        return idCity;
+    }
+
+    public void setIdCity(Integer idCity) {
+        this.idCity = idCity;
+    }
+
+    public Integer getIdState() {
+        return idState;
+    }
+
+    public void setIdState(Integer idState) {
+        this.idState = idState;
+    }
+
+    public Integer getIdCountry() {
+        return idCountry;
+    }
+
+    public void setIdCountry(Integer idCountry) {
+        this.idCountry = idCountry;
+    }
+
+    public Integer getIdSex() {
+        return idSex;
+    }
+
+    public void setIdSex(Integer idSex) {
+        this.idSex = idSex;
     }
 }

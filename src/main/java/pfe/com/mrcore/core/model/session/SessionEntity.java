@@ -1,22 +1,27 @@
-package pfe.com.mrcore.clientapi.dto;
+package pfe.com.mrcore.core.model.session;
 
+import javax.persistence.*;
 import java.util.Date;
 
-public class Session {
+@Entity
+@Table(name = "session")
+public class SessionEntity {
 
+    @Id
+    @Column(name = "id_session")
     private String idSession;
+
+    @Column(name = "id_profile")
     private Integer idProfile;
+
+    @Column(name = "id_role")
     private Integer idRole;
+
+    @Column(name = "creation_date")
     private Date creationDate;
+
+    @Column(name = "last_action_date")
     private Date lastActionDate;
-
-    public Integer getIdProfile() {
-        return idProfile;
-    }
-
-    public void setIdProfile(Integer idProfile) {
-        this.idProfile = idProfile;
-    }
 
     public String getIdSession() {
         return idSession;
@@ -24,6 +29,14 @@ public class Session {
 
     public void setIdSession(String idSession) {
         this.idSession = idSession;
+    }
+
+    public Integer getIdProfile() {
+        return idProfile;
+    }
+
+    public void setIdProfile(Integer idProfile) {
+        this.idProfile = idProfile;
     }
 
     public Integer getIdRole() {

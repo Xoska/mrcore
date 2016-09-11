@@ -1,6 +1,7 @@
 package pfe.com.mrcore.clientapi.service;
 
-import pfe.com.mrcore.clientapi.dto.Session;
+import pfe.com.mrcore.clientapi.dto.session.Credential;
+import pfe.com.mrcore.clientapi.dto.session.Session;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,10 +13,9 @@ public interface SessionAPIService {
 
     @POST
     @Path("/login")
-    Session login(@QueryParam("username") String username,
-                  @QueryParam("password") String password);
+    Session login(Credential credential);
 
     @POST
     @Path("/logout")
-    void logout(Session session);
+    void logout(@QueryParam("id_session") String idSession);
 }

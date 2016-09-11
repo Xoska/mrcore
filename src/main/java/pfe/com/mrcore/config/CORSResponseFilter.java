@@ -1,5 +1,6 @@
 package pfe.com.mrcore.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -18,7 +19,7 @@ public class CORSResponseFilter implements ContainerResponseFilter {
         MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 
         headers.add("Access-Control-Allow-Origin", "http://localhost:8000");
-        headers.add("Access-Control-Allow-Credentials", "true");
+        headers.add("Access-Control-Allow-Credential", "true");
         headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
     }

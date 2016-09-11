@@ -1,4 +1,4 @@
-package pfe.com.mrcore.core.model;
+package pfe.com.mrcore.core.model.profile;
 
 import javax.persistence.*;
 

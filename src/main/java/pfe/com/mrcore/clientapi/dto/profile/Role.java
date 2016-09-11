@@ -1,4 +1,4 @@
-package pfe.com.mrcore.clientapi.dto;
+package pfe.com.mrcore.clientapi.dto.profile;
 
 import java.io.Serializable;
 

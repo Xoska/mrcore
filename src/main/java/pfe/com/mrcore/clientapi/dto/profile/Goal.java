@@ -1,15 +1,15 @@
-package pfe.com.mrcore.clientapi.dto;
+package pfe.com.mrcore.clientapi.dto.profile;
 
 public class Goal {
 
     private Integer idGoal;
     private String name;
 
-    public Integer getIdSex() {
+    public Integer getIdGoal() {
         return idGoal;
     }
 
-    public void setIdSex(Integer idGoal) {
+    public void setIdGoal(Integer idGoal) {
         this.idGoal = idGoal;
     }
 

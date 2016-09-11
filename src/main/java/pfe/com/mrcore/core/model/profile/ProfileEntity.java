@@ -1,4 +1,4 @@
-package pfe.com.mrcore.core.model;
+package pfe.com.mrcore.core.model.profile;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -31,14 +31,17 @@ public class ProfileEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "city")
-    private String city;
+    @Column(name = "id_city")
+    private Integer idCity;
 
-    @Column(name = "country")
-    private String country;
+    @Column(name = "id_country")
+    private Integer idCountry;
 
-    @Column(name = "sex")
-    private Integer sex;
+    @Column(name = "id_state")
+    private Integer idState;
+
+    @Column(name = "id_sex")
+    private Integer idSex;
 
     @Column(name = "zip_code")
     private String zipCode;
@@ -124,30 +127,6 @@ public class ProfileEntity {
         this.role = role;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
     public String getZipCode() {
         return zipCode;
     }
@@ -162,5 +141,37 @@ public class ProfileEntity {
 
     public void setBirthdayDate(Date birthdayDate) {
         this.birthdayDate = birthdayDate;
+    }
+
+    public Integer getIdCity() {
+        return idCity;
+    }
+
+    public void setIdCity(Integer idCity) {
+        this.idCity = idCity;
+    }
+
+    public Integer getIdSex() {
+        return idSex;
+    }
+
+    public void setIdSex(Integer idSex) {
+        this.idSex = idSex;
+    }
+
+    public Integer getIdCountry() {
+        return idCountry;
+    }
+
+    public void setIdCountry(Integer idCountry) {
+        this.idCountry = idCountry;
+    }
+
+    public Integer getIdState() {
+        return idState;
+    }
+
+    public void setIdState(Integer idState) {
+        this.idState = idState;
     }
 }

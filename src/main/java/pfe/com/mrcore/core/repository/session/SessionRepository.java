@@ -1,7 +1,7 @@
-package pfe.com.mrcore.core.repository;
+package pfe.com.mrcore.core.repository.session;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pfe.com.mrcore.core.model.SessionEntity;
+import pfe.com.mrcore.core.model.session.SessionEntity;
 
 public interface SessionRepository extends JpaRepository<SessionEntity, String> {
 

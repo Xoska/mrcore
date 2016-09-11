@@ -6,11 +6,11 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 @Component
-public class SessionIdentifierGenerator {
+public class IdentifierGenerator {
 
     private SecureRandom random = new SecureRandom();
 
-    public String nextSessionId() {
+    public String nextId() {
 
         return new BigInteger(130, random).toString(32);
     }

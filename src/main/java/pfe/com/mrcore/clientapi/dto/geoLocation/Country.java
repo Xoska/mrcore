@@ -1,4 +1,4 @@
-package pfe.com.mrcore.clientapi.dto;
+package pfe.com.mrcore.clientapi.dto.geoLocation;
 
 public class Country {
 

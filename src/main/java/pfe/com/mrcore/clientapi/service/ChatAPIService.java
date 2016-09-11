@@ -1,33 +1,42 @@
 package pfe.com.mrcore.clientapi.service;
 
-import pfe.com.mrcore.clientapi.dto.Profile;
-import pfe.com.mrcore.clientapi.dto.Session;
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.SseFeature;
+import pfe.com.mrcore.clientapi.dto.chat.Post;
+import pfe.com.mrcore.clientapi.dto.chat.Search;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/chat")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface ChatAPIService {
 
-    @GET
-    @Path("/{id_profile}")
-    Profile getProfile(@PathParam("id_profile") Integer profileId,
-                       Session session);
-
     @POST
-    Profile create(Profile profile);
+    @Path("/search")
+    String search(@QueryParam("id_profile") Integer idProfile,
+                  @QueryParam("id_session") String idSession,
+                  Search search);
 
-    @PUT
-    @Path("/{id_profile}")
-    Profile update(@PathParam("id_profile") Integer profileId,
-                   Profile profile,
-                   Session session);
+    @GET
+    @Path("/join/{id_room}")
+    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    EventOutput joinRoom(@PathParam("id_room") String roomId,
+                         @QueryParam("id_profile") Integer idProfile,
+                         @QueryParam("id_session") String idSession);
 
     @DELETE
-    @Path("/{id_profile}")
-    Response delete(@PathParam("id_profile") Integer profileId,
-                    Session session);
+    @Path("/leave/{id_room}")
+    String leaveRoom(@PathParam("id_room") String idRoom);
+
+
+    @POST
+    @Path("/post/{id_room}")
+    void post(@PathParam("id_room") String idRoom,
+              @QueryParam("id_profile") Integer idProfile,
+              @QueryParam("id_session") String idSession,
+              Post post);
+
+
 }

@@ -1,19 +1,19 @@
 package pfe.com.mrcore.core.service;
 
-import pfe.com.mrcore.clientapi.dto.Profile;
-import pfe.com.mrcore.clientapi.dto.Session;
+import pfe.com.mrcore.clientapi.dto.session.Credential;
+import pfe.com.mrcore.clientapi.dto.session.Session;
 import pfe.com.mrcore.clientapi.service.SessionAPIService;
-import pfe.com.mrcore.core.model.ProfileEntity;
-import pfe.com.mrcore.core.model.SessionEntity;
-import pfe.com.mrcore.core.repository.ProfileRepository;
-import pfe.com.mrcore.core.repository.SessionRepository;
+import pfe.com.mrcore.core.model.profile.ProfileEntity;
+import pfe.com.mrcore.core.model.session.SessionEntity;
+import pfe.com.mrcore.core.repository.profile.ProfileRepository;
+import pfe.com.mrcore.core.repository.session.SessionRepository;
 import pfe.com.mrcore.core.utils.CustomWebExceptionHandler;
 import org.apache.commons.lang3.Validate;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pfe.com.mrcore.core.utils.SessionIdentifierGenerator;
+import pfe.com.mrcore.core.utils.IdentifierGenerator;
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -28,19 +28,18 @@ public class SessionService implements SessionAPIService {
     private SessionRepository sessionRepository;
 
     @Autowired
-    private SessionIdentifierGenerator sessionIdentifierGenerator;
+    private IdentifierGenerator identifierGenerator;
 
     @Autowired
     private Mapper mapper;
 
     @Override
     @Transactional
-    public Session login(String username, String password) {
+    public Session login(Credential credential) {
 
-        Validate.notNull(username, "Empty query param [username]");
-        Validate.notNull(password, "Empty query param [password]");
+        Validate.notNull(credential, "Empty query param [credential]");
 
-        ProfileEntity profileEntity = profileRepository.findByUsernameAndPassword(username, password);
+        ProfileEntity profileEntity = profileRepository.findByUsernameAndPassword(credential.getUsername(), credential.getUsername());
 
         if (profileEntity == null) {
 
@@ -59,26 +58,28 @@ public class SessionService implements SessionAPIService {
 
     @Override
     @Transactional
-    public void logout(Session session) {
+    public void logout(String idSession) {
 
-        Validate.notNull(session, "Missing mandatory parameter [session]");
+        Validate.notNull(idSession, "Missing mandatory parameter [idSession]");
 
-        sessionRepository.delete(session.getIdSession());
+        sessionRepository.delete(idSession);
     }
 
     @Transactional
-    public Boolean isSessionValid(Session session, Integer IdProfile,  Integer IdRole) {
+    public Boolean isSessionValid(String idSession, Integer idProfile, Integer idRole) {
 
-        SessionEntity sessionEntity = sessionRepository.findOne(session.getIdSession());
+        Validate.notNull(idSession, "Missing mandatory parameter [idSession]");
 
-        return sessionEntity != null && sessionEntity.getIdProfile().equals(IdProfile) && sessionEntity.getIdRole() <= IdRole;
+        SessionEntity sessionEntity = sessionRepository.findOne(idSession);
+
+        return sessionEntity != null && sessionEntity.getIdProfile().equals(idProfile) && sessionEntity.getIdRole() <= idRole;
     }
 
     private Session createSession(ProfileEntity profileEntity) {
 
         SessionEntity sessionEntity = new SessionEntity();
 
-        sessionEntity.setIdSession(sessionIdentifierGenerator.nextSessionId());
+        sessionEntity.setIdSession(identifierGenerator.nextId());
         sessionEntity.setIdProfile(profileEntity.getIdProfile());
         sessionEntity.setIdRole(profileEntity.getRole().getIdRole());
         sessionEntity.setCreationDate(new Date());
