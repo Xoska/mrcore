@@ -18,9 +18,8 @@ public class ProfileEntity {
     @Column(name = "password")
     private String password;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_role")
-    private RoleEntity role;
+    @Column(name = "role")
+    private String role;
 
     @Column(name = "first_name")
     private String firstName;
@@ -119,11 +118,11 @@ public class ProfileEntity {
         this.email = email;
     }
 
-    public RoleEntity getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(RoleEntity role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

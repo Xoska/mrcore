@@ -8,14 +8,14 @@ import java.util.Date;
 public class SessionEntity {
 
     @Id
-    @Column(name = "id_session")
-    private String idSession;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "id_profile")
     private Integer idProfile;
 
-    @Column(name = "id_role")
-    private Integer idRole;
+    @Column(name = "role")
+    private String role;
 
     @Column(name = "creation_date")
     private Date creationDate;
@@ -23,12 +23,12 @@ public class SessionEntity {
     @Column(name = "last_action_date")
     private Date lastActionDate;
 
-    public String getIdSession() {
-        return idSession;
+    public String getName() {
+        return name;
     }
 
-    public void setIdSession(String idSession) {
-        this.idSession = idSession;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getIdProfile() {
@@ -39,12 +39,12 @@ public class SessionEntity {
         this.idProfile = idProfile;
     }
 
-    public Integer getIdRole() {
-        return idRole;
+    public String getRole() {
+        return role;
     }
 
-    public void setIdRole(Integer idRole) {
-        this.idRole = idRole;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreationDate() {

@@ -1,58 +1,22 @@
 package pfe.com.mrcore.core.utils;
 
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.lang.reflect.ParameterizedType;
+import org.dozer.Mapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class DozerMapper<Dto, Entity> {
+public class DozerMapper {
 
-    @Autowired
-    private Mapper mapper;
+    public static <T, U> List<U> map(Mapper mapper, List<T> source, Class<U> destType) {
 
-    public List<Entity> mapToEntityList(List<Dto> dtos) {
+        List<U> dest = new ArrayList<>();
 
-        List<Entity> entities = new ArrayList<Entity>();
+        for (T element : source) {
 
-        for (Dto dto : dtos) {
-
-            entities.add(mapToEntity(dto));
+            dest.add(mapper.map(element, destType));
         }
 
-        return entities;
-    }
-
-    public List<Dto> mapToDtoList(List<Entity> entities) {
-
-        List<Dto> dtos = new ArrayList<Dto>();
-
-        for (Entity entity : entities) {
-
-            dtos.add(mapToDto(entity));
-        }
-
-        return dtos;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Entity mapToEntity(Dto dto) {
-
-        Class<Entity> entityClass = (Class<Entity>)
-                ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-
-        return mapper.map(dto, entityClass);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Dto mapToDto(Entity entity) {
-
-        Class<Dto> dtoClass = (Class<Dto>)
-                ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-
-        return mapper.map(entity, dtoClass);
+        return dest;
     }
 }

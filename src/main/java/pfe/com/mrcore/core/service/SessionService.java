@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pfe.com.mrcore.core.utils.IdentifierGenerator;
 
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 
 @Service
@@ -39,49 +41,55 @@ public class SessionService implements SessionAPIService {
 
         Validate.notNull(credential, "Empty query param [credential]");
 
-        ProfileEntity profileEntity = profileRepository.findByUsernameAndPassword(credential.getUsername(), credential.getUsername());
+        ProfileEntity profileEntity = profileRepository.findByUsernameAndPassword(credential.getUsername(), credential.getPassword());
 
         if (profileEntity == null) {
 
             throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "INVALID_CREDENTIALS");
         }
 
-        SessionEntity sessionEntity = sessionRepository.findByIdProfile(profileEntity.getIdProfile());
+        try {
 
-        if (sessionEntity != null) {
+            SessionEntity sessionEntity = sessionRepository.findByIdProfile(profileEntity.getIdProfile());
 
-            return mapper.map(sessionEntity, Session.class);
+            if (sessionEntity != null) {
+
+                return mapper.map(sessionEntity, Session.class);
+            }
+
+            return createSession(profileEntity);
+        } catch(Exception e) {
+
+
         }
 
-        return createSession(profileEntity);
+        return null;
     }
 
     @Override
     @Transactional
-    public void logout(String idSession) {
+    public Response logout(@Context SecurityContext session) {
 
-        Validate.notNull(idSession, "Missing mandatory parameter [idSession]");
+        try {
 
-        sessionRepository.delete(idSession);
-    }
+            sessionRepository.delete(session.getUserPrincipal().getName());
 
-    @Transactional
-    public Boolean isSessionValid(String idSession, Integer idProfile, Integer idRole) {
+            return Response.accepted().build();
+        } catch (Exception e) {
 
-        Validate.notNull(idSession, "Missing mandatory parameter [idSession]");
 
-        SessionEntity sessionEntity = sessionRepository.findOne(idSession);
+        }
 
-        return sessionEntity != null && sessionEntity.getIdProfile().equals(idProfile) && sessionEntity.getIdRole() <= idRole;
+        return Response.serverError().build();
     }
 
     private Session createSession(ProfileEntity profileEntity) {
 
         SessionEntity sessionEntity = new SessionEntity();
 
-        sessionEntity.setIdSession(identifierGenerator.nextId());
+        sessionEntity.setName(identifierGenerator.nextId(32));
         sessionEntity.setIdProfile(profileEntity.getIdProfile());
-        sessionEntity.setIdRole(profileEntity.getRole().getIdRole());
+        sessionEntity.setRole(profileEntity.getRole());
         sessionEntity.setCreationDate(new Date());
         sessionEntity.setLastActionDate(new Date());
 

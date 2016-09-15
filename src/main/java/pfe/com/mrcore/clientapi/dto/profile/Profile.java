@@ -8,7 +8,7 @@ public class Profile implements Serializable {
     private Integer idProfile;
     private String username;
     private String password;
-    private Role role;
+    private String role;
     private String firstName;
     private String lastName;
     private String email;
@@ -69,11 +69,11 @@ public class Profile implements Serializable {
         this.password = password;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

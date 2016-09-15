@@ -1,27 +1,30 @@
 package pfe.com.mrcore.core.service;
 
 import org.apache.commons.lang3.Validate;
-import org.dozer.Mapper;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pfe.com.mrcore.clientapi.dto.chat.Post;
+import pfe.com.mrcore.clientapi.dto.chat.Room;
 import pfe.com.mrcore.clientapi.dto.chat.Search;
 import pfe.com.mrcore.clientapi.service.ChatAPIService;
 import pfe.com.mrcore.core.model.chat.QueueEntity;
 import pfe.com.mrcore.core.model.profile.ProfileEntity;
 import pfe.com.mrcore.core.repository.chat.QueueRepository;
 import pfe.com.mrcore.core.repository.profile.ProfileRepository;
-import pfe.com.mrcore.core.repository.profile.SexRepository;
-import pfe.com.mrcore.core.utils.AgeCalculator;
+import pfe.com.mrcore.core.utils.DateCalculator;
 import pfe.com.mrcore.core.utils.CustomWebExceptionHandler;
 import pfe.com.mrcore.core.utils.IdentifierGenerator;
 
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,84 +41,106 @@ public class ChatService implements ChatAPIService {
     private ProfileRepository profileRepository;
 
     @Autowired
-    private AgeCalculator ageCalculator;
+    private DateCalculator dateCalculator;
 
     @Autowired
     private IdentifierGenerator identifierGenerator;
 
-    private static final Integer ROLE_REQUIRED_PROFILE = 3;
-
     private static final Map<String, SseBroadcaster> ROOM_SSE_BROADCASTER = new ConcurrentHashMap<>();
 
     @Override
-    public String search(Integer idProfile, String idSession, Search search) {
-
-        if (sessionService.isSessionValid(idSession, idProfile, ROLE_REQUIRED_PROFILE)) {
-
-            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "SESSION_INVALID");
-        }
-
-        Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
+    @Transactional
+    public Room search(Integer idProfile, Search search) {
 
         if (queueRepository.countByIdProfile(idProfile) > 0) {
 
             throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "PROFILE_ALREADY_QUEUED");
         }
 
-        ProfileEntity profileEntity = profileRepository.findOne(idProfile);
-        QueueEntity queueEntity = queueRepository.searchMatch(search.getIdsCity(), profileEntity.getIdCity(),
-                search.getIdCountry(), profileEntity.getIdCountry(), search.getIdState(), profileEntity.getIdState(),
-                search.getIdSex(), profileEntity.getIdSex(), search.getIdGoal(), search.getAgeMin(), search.getAgeMax(),
-                ageCalculator.getAge(profileEntity.getBirthdayDate()));
+        try {
 
-        if (queueEntity == null) {
+            ProfileEntity profileEntity = profileRepository.findOne(idProfile);
 
-            String identifier = identifierGenerator.nextId();
-            queueEntity = buildQueueEntity(identifier, profileEntity, search);
+            List<QueueEntity> queueEntities = queueRepository.searchMatch(search.getIdsCity(), profileEntity.getIdCity(),
+                    search.getIdCountry(), profileEntity.getIdCountry(), search.getIdState(), profileEntity.getIdState(),
+                    search.getIdSex(), profileEntity.getIdSex(), search.getIdGoal(), search.getAgeMin(), search.getAgeMax(),
+                    dateCalculator.getAge(profileEntity.getBirthdayDate()));
 
-            queueRepository.save(queueEntity);
+
+            String idRoom;
+
+            if (queueEntities.isEmpty()) {
+
+                idRoom = identifierGenerator.nextId(6);
+
+                queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
+            }
+            else {
+
+                QueueEntity queueEntityPriority = queueEntities.get(0);
+                idRoom = queueEntityPriority.getIdRoom();
+
+                queueRepository.delete(queueEntityPriority);
+            }
+
+            registerRoom(idRoom);
+            return buildRoom(idRoom);
+        } catch (Exception e) {
+
+
         }
-
-        registerRoom(queueEntity.getIdRoom());
-
-        return queueEntity.getIdRoom();
-    }
-
-    @Override
-    public EventOutput joinRoom(String idRoom, Integer idProfile, String idSession) {
-
-        if (sessionService.isSessionValid(idSession, idProfile, ROLE_REQUIRED_PROFILE)) {
-
-            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "SESSION_INVALID");
-        }
-
-        Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
-
-        queueRepository.deleteByIdProfile(idProfile);
-
-        EventOutput eventOutput = new EventOutput();
-        ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
-
-        return eventOutput;
-    }
-
-    @Override
-    public String leaveRoom(String idRoom) {
 
         return null;
     }
 
     @Override
-    public void post(String idRoom, Integer idProfile, String idSession, Post post) {
+    public EventOutput joinRoom(String idRoom, Integer idProfile) {
 
-        if (sessionService.isSessionValid(idSession, idProfile, ROLE_REQUIRED_PROFILE)) {
+        try {
 
-            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "SESSION_INVALID");
+            EventOutput eventOutput = new EventOutput();
+            ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
+
+            return eventOutput;
+        } catch (Exception e) {
+
+
         }
 
-        Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
+        return null;
+    }
 
-        ROOM_SSE_BROADCASTER.get(idRoom).broadcast(buildEvent(post));
+    @Override
+    public Response leaveRoom(@Context SecurityContext session, String idRoom) {
+
+        try {
+
+            return Response.accepted().build();
+        } catch (Exception e) {
+
+
+        }
+
+        return Response.serverError().build();
+    }
+
+    public void deleteQueue() {
+
+
+    }
+
+    @Override
+    public void post(String idRoom, Post post) {
+
+        Validate.notNull(post, "Missing mandatory parameter [post]");
+
+        try {
+
+            ROOM_SSE_BROADCASTER.get(idRoom).broadcast(buildEvent(post));
+        } catch (Exception e) {
+
+
+        }
     }
 
     private void registerRoom(String idRoom) {
@@ -133,7 +158,7 @@ public class ChatService implements ChatAPIService {
         queueEntity.setIdState(profileEntity.getIdState());
         queueEntity.setZipCode(profileEntity.getZipCode());
         queueEntity.setIdSex(profileEntity.getIdSex());
-        queueEntity.setAge(ageCalculator.getAge(profileEntity.getBirthdayDate()));
+        queueEntity.setAge(dateCalculator.getAge(profileEntity.getBirthdayDate()));
 
         queueEntity.setIdsCitySearch(search.getIdsCity());
         queueEntity.setIdStateSearch(search.getIdState());
@@ -157,5 +182,15 @@ public class ChatService implements ChatAPIService {
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
                 .data(Post.class, post)
                 .build();
+    }
+
+    private Room buildRoom(String identifier) {
+
+        Room room = new Room();
+
+        room.setIdRoom(identifier);
+        room.setEnteredDate(new Date());
+
+        return room;
     }
 }

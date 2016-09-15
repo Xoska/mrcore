@@ -28,7 +28,6 @@ public class DozerConfig {
         BeanMappingBuilder builder = new BeanMappingBuilder() {
             protected void configure() {
                 mapping(Role.class, RoleEntity.class);
-                mapping(Profile.class, ProfileEntity.class);
                 mapping(Country.class, CountryEntity.class);
                 mapping(City.class, CityEntity.class);
                 mapping(State.class, StateEntity.class);

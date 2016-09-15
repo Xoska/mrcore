@@ -5,7 +5,7 @@ import pfe.com.mrcore.core.model.geoLocation.StateEntity;
 
 import java.util.List;
 
-public interface StateRepository extends JpaRepository<StateEntity, String> {
+public interface StateRepository extends JpaRepository<StateEntity, Integer> {
 
     List<StateEntity> findAllByIdCountry(Integer idCountry);
 }

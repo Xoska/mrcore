@@ -1,12 +1,13 @@
 package pfe.com.mrcore.clientapi.dto.session;
 
+import java.security.Principal;
 import java.util.Date;
 
-public class Session {
+public class Session implements Principal {
 
-    private String idSession;
+    private String name;
     private Integer idProfile;
-    private Integer idRole;
+    private String role;
     private Date creationDate;
     private Date lastActionDate;
 
@@ -18,20 +19,20 @@ public class Session {
         this.idProfile = idProfile;
     }
 
-    public String getIdSession() {
-        return idSession;
+    public String getName() {
+        return name;
     }
 
-    public void setIdSession(String idSession) {
-        this.idSession = idSession;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Integer getIdRole() {
-        return idRole;
+    public String getRole() {
+        return role;
     }
 
-    public void setIdRole(Integer idRole) {
-        this.idRole = idRole;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreationDate() {

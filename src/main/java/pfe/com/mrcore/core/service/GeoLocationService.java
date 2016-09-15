@@ -1,16 +1,13 @@
 package pfe.com.mrcore.core.service;
 
 import org.apache.commons.lang3.Validate;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pfe.com.mrcore.clientapi.dto.geoLocation.City;
 import pfe.com.mrcore.clientapi.dto.geoLocation.Country;
 import pfe.com.mrcore.clientapi.dto.geoLocation.State;
 import pfe.com.mrcore.clientapi.service.GeoLocationAPIService;
-import pfe.com.mrcore.core.model.geoLocation.CityEntity;
-import pfe.com.mrcore.core.model.geoLocation.CountryEntity;
-import pfe.com.mrcore.core.model.geoLocation.StateEntity;
 import pfe.com.mrcore.core.repository.geoLocation.CityRepository;
 import pfe.com.mrcore.core.repository.geoLocation.CountryRepository;
 import pfe.com.mrcore.core.repository.geoLocation.StateRepository;
@@ -31,36 +28,51 @@ public class GeoLocationService implements GeoLocationAPIService {
     private CountryRepository countryRepository;
 
     @Autowired
-    private DozerMapper<Country, CountryEntity> dozerMapperCountry;
-
-    @Autowired
-    private DozerMapper<State, StateEntity> dozerMapperState;
-
-    @Autowired
-    private DozerMapper<City, CityEntity> dozerMapperCity;
-
-    private static final Integer ROLE_REQUIRED_PROFILE = 3;
+    private Mapper mapper;
 
     @Override
-    @Transactional
     public List<Country> getCountries() {
 
-        return dozerMapperCountry.mapToDtoList(countryRepository.findAll());
+        try {
+
+            return DozerMapper.map(mapper, countryRepository.findAll(), Country.class);
+        } catch(Exception e) {
+
+
+        }
+
+        return null;
     }
 
     @Override
-    @Transactional
     public List<State> getStates(Integer idCountry) {
 
-        return dozerMapperState.mapToDtoList(stateRepository.findAllByIdCountry(idCountry));
+        Validate.notNull(idCountry, "Missing mandatory parameter [idCountry]");
+
+        try {
+
+            return DozerMapper.map(mapper, stateRepository.findAllByIdCountry(idCountry), State.class);
+        } catch(Exception e) {
+
+
+        }
+
+        return null;
     }
 
     @Override
-    @Transactional
     public List<City> getCities(Integer idState) {
 
         Validate.notNull(idState, "Missing mandatory parameter [idState]");
 
-        return dozerMapperCity.mapToDtoList(cityRepository.findAllByIdState(idState));
+        try {
+
+            return DozerMapper.map(mapper, cityRepository.findAllByIdState(idState), City.class);
+        } catch(Exception e) {
+
+
+        }
+
+        return null;
     }
 }

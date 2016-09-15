@@ -10,8 +10,8 @@ public class IdentifierGenerator {
 
     private SecureRandom random = new SecureRandom();
 
-    public String nextId() {
+    public String nextId(Integer length) {
 
-        return new BigInteger(130, random).toString(32);
+        return new BigInteger(130, random).toString(length);
     }
 }
