@@ -1,6 +1,7 @@
 package pfe.com.mrcore.core.service;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class GeoLocationService implements GeoLocationAPIService {
     @Autowired
     private Mapper mapper;
 
+    private final static Logger logger = Logger.getLogger(GeoLocationService.class);
+
     @Override
     public List<Country> getCountries() {
 
@@ -38,7 +41,7 @@ public class GeoLocationService implements GeoLocationAPIService {
             return DozerMapper.map(mapper, countryRepository.findAll(), Country.class);
         } catch(Exception e) {
 
-
+            logger.error("Error while getting the countries", e);
         }
 
         return null;
@@ -54,7 +57,7 @@ public class GeoLocationService implements GeoLocationAPIService {
             return DozerMapper.map(mapper, stateRepository.findAllByIdCountry(idCountry), State.class);
         } catch(Exception e) {
 
-
+            logger.error(String.format("Error while searching for states with country [%s]", idCountry), e);
         }
 
         return null;
@@ -70,7 +73,7 @@ public class GeoLocationService implements GeoLocationAPIService {
             return DozerMapper.map(mapper, cityRepository.findAllByIdState(idState), City.class);
         } catch(Exception e) {
 
-
+            logger.error(String.format("Error while searching for citites with state [%s]", idState), e);
         }
 
         return null;

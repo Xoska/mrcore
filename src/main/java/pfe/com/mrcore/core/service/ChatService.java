@@ -1,6 +1,7 @@
 package pfe.com.mrcore.core.service;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
@@ -19,10 +20,8 @@ import pfe.com.mrcore.core.utils.DateCalculator;
 import pfe.com.mrcore.core.utils.CustomWebExceptionHandler;
 import pfe.com.mrcore.core.utils.IdentifierGenerator;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +46,8 @@ public class ChatService implements ChatAPIService {
     private IdentifierGenerator identifierGenerator;
 
     private static final Map<String, SseBroadcaster> ROOM_SSE_BROADCASTER = new ConcurrentHashMap<>();
+
+    private final static Logger logger = Logger.getLogger(ChatService.class);
 
     @Override
     @Transactional
@@ -87,7 +88,7 @@ public class ChatService implements ChatAPIService {
             return buildRoom(idRoom);
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while searching for match with profile [%s]", idProfile), e);
         }
 
         return null;
@@ -98,35 +99,33 @@ public class ChatService implements ChatAPIService {
 
         try {
 
+            removeFromQueue(idProfile);
+
             EventOutput eventOutput = new EventOutput();
             ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
 
             return eventOutput;
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while joining room with profile [%s]", idProfile), e);
         }
 
         return null;
     }
 
     @Override
-    public Response leaveRoom(@Context SecurityContext session, String idRoom) {
+    public Response removeFromQueue(Integer idProfile) {
 
         try {
 
+            queueRepository.deleteByIdProfile(idProfile);
             return Response.accepted().build();
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while removing profile [%s] from queue", idProfile), e);
         }
 
         return Response.serverError().build();
-    }
-
-    public void deleteQueue() {
-
-
     }
 
     @Override
@@ -139,7 +138,7 @@ public class ChatService implements ChatAPIService {
             ROOM_SSE_BROADCASTER.get(idRoom).broadcast(buildEvent(post));
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while posting with profile [%s]", post.getIdProfile()), e);
         }
     }
 

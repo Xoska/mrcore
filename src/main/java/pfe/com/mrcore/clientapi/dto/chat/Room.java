@@ -1,8 +1,9 @@
 package pfe.com.mrcore.clientapi.dto.chat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Room {
+public class Room implements Serializable {
 
     private String idRoom;
     private Date enteredDate;

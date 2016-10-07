@@ -1,5 +1,7 @@
 package pfe.com.mrcore.core.service;
 
+import org.apache.log4j.Logger;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pfe.com.mrcore.clientapi.dto.session.Credential;
 import pfe.com.mrcore.clientapi.dto.session.Session;
 import pfe.com.mrcore.clientapi.service.SessionAPIService;
@@ -15,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pfe.com.mrcore.core.utils.IdentifierGenerator;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 
 @Service
@@ -35,32 +35,39 @@ public class SessionService implements SessionAPIService {
     @Autowired
     private Mapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private final static Logger logger = Logger.getLogger(SessionService.class);
+
     @Override
     @Transactional
     public Session login(Credential credential) {
 
         Validate.notNull(credential, "Empty query param [credential]");
 
-        ProfileEntity profileEntity = profileRepository.findByUsernameAndPassword(credential.getUsername(), credential.getPassword());
+        ProfileEntity profileEntity = profileRepository.findByUsername(credential.getUsername());
 
-        if (profileEntity == null) {
+        if (profileEntity != null && passwordEncoder.matches(credential.getPassword(), profileEntity.getPassword())) {
+
+            try {
+
+                SessionEntity sessionEntity = sessionRepository.findByIdProfile(profileEntity.getIdProfile());
+
+                if (sessionEntity != null) {
+
+                    return mapper.map(sessionEntity, Session.class);
+                }
+
+                return createSession(profileEntity);
+            } catch(Exception e) {
+
+                logger.error(String.format("Error while logging in with username [%s]", credential.getUsername()), e);
+            }
+        }
+        else {
 
             throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "INVALID_CREDENTIALS");
-        }
-
-        try {
-
-            SessionEntity sessionEntity = sessionRepository.findByIdProfile(profileEntity.getIdProfile());
-
-            if (sessionEntity != null) {
-
-                return mapper.map(sessionEntity, Session.class);
-            }
-
-            return createSession(profileEntity);
-        } catch(Exception e) {
-
-
         }
 
         return null;
@@ -68,16 +75,16 @@ public class SessionService implements SessionAPIService {
 
     @Override
     @Transactional
-    public Response logout(@Context SecurityContext session) {
+    public Response logout(Integer idProfile) {
 
         try {
 
-            sessionRepository.delete(session.getUserPrincipal().getName());
+            sessionRepository.deleteByIdProfile(idProfile);
 
             return Response.accepted().build();
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while logging out with profile [%s]", idProfile), e);
         }
 
         return Response.serverError().build();

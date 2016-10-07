@@ -1,6 +1,8 @@
 package pfe.com.mrcore.clientapi.dto.session;
 
-public class Credential {
+import java.io.Serializable;
+
+public class Credential implements Serializable {
 
     private String username;
     private String password;

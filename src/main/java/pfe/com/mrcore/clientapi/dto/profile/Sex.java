@@ -1,6 +1,8 @@
 package pfe.com.mrcore.clientapi.dto.profile;
 
-public class Sex {
+import java.io.Serializable;
+
+public class Sex implements Serializable {
 
     private Integer idSex;
     private String name;

@@ -1,6 +1,8 @@
 package pfe.com.mrcore.clientapi.dto.profile;
 
-public class Goal {
+import java.io.Serializable;
+
+public class Goal implements Serializable {
 
     private Integer idGoal;
     private String name;

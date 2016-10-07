@@ -1,6 +1,8 @@
 package pfe.com.mrcore.clientapi.dto.geoLocation;
 
-public class State {
+import java.io.Serializable;
+
+public class State implements Serializable {
 
     private Integer idState;
     private Country country;

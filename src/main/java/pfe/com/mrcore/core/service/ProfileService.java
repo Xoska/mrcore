@@ -1,6 +1,7 @@
 package pfe.com.mrcore.core.service;
 
-import pfe.com.mrcore.clientapi.dto.geoLocation.Country;
+import org.apache.log4j.Logger;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pfe.com.mrcore.clientapi.dto.profile.Goal;
 import pfe.com.mrcore.clientapi.dto.profile.Profile;
 import pfe.com.mrcore.clientapi.dto.profile.Sex;
@@ -17,11 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pfe.com.mrcore.core.utils.DozerMapper;
+import pfe.com.mrcore.core.utils.FieldValidator;
 import pfe.com.mrcore.core.utils.InputSanitizer;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 import java.util.List;
 
@@ -41,10 +41,23 @@ public class ProfileService implements ProfileAPIService {
     private SessionService sessionService;
 
     @Autowired
+    private ChatService chatService;
+
+    @Autowired
     private InputSanitizer inputSanitizer;
 
     @Autowired
+    private FieldValidator fieldValidator;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private Mapper mapper;
+
+    private final static Logger logger = Logger.getLogger(ProfileService.class);
+
+    private final static Integer LENGTH_VARCHAR = 128;
 
     @Override
     @Transactional
@@ -64,7 +77,7 @@ public class ProfileService implements ProfileAPIService {
             return mapper.map(profileRepository.save(profileEntity), Profile.class);
         } catch(Exception e) {
 
-
+            logger.error("Error while getting creating profile", e);
         }
 
         return null;
@@ -90,7 +103,7 @@ public class ProfileService implements ProfileAPIService {
             return mapper.map(profileRepository.save(profileEntity), Profile.class);
         } catch(Exception e) {
 
-
+            logger.error(String.format("Error while updating profile [%s]", idProfile), e);
         }
 
         return null;
@@ -106,7 +119,7 @@ public class ProfileService implements ProfileAPIService {
             return mapper.map(profileEntity, Profile.class);
         } catch(Exception e) {
 
-
+            logger.error(String.format("Error while getting profile [%s]", idProfile), e);
         }
 
         return null;
@@ -114,17 +127,18 @@ public class ProfileService implements ProfileAPIService {
 
     @Override
     @Transactional
-    public Response delete(@Context SecurityContext session, Integer idProfile) {
+    public Response delete(Integer idProfile) {
 
         try {
 
             profileRepository.delete(idProfile);
-            sessionService.logout(session);
+            sessionService.logout(idProfile);
+            chatService.removeFromQueue(idProfile);
 
             return Response.accepted().build();
         } catch (Exception e) {
 
-
+            logger.error(String.format("Error while deleting profile [%s]", idProfile), e);
         }
 
         return Response.serverError().build();
@@ -138,7 +152,7 @@ public class ProfileService implements ProfileAPIService {
             return DozerMapper.map(mapper, sexRepository.findAll(), Sex.class);
         } catch(Exception e) {
 
-
+            logger.error("Error while getting the sexes", e);
         }
 
         return null;
@@ -152,7 +166,7 @@ public class ProfileService implements ProfileAPIService {
             return DozerMapper.map(mapper, goalRepository.findAll(), Goal.class);
         } catch(Exception e) {
 
-
+            logger.error("Error while getting the goals", e);
         }
 
         return null;
@@ -162,7 +176,9 @@ public class ProfileService implements ProfileAPIService {
 
         sanitizeFields(profile);
 
-        return true;
+        return fieldValidator.checkEmails(profile.getEmail())
+                && fieldValidator.checkFieldsLength(LENGTH_VARCHAR, profile.getEmail(), profile.getFirstName(),
+                profile.getLastName(), profile.getUsername(), profile.getZipCode());
     }
 
     private ProfileEntity buildProfileEntity(Profile profile) {
@@ -190,7 +206,7 @@ public class ProfileService implements ProfileAPIService {
         profileEntity.setLastName(profile.getLastName());
         profileEntity.setZipCode(profile.getZipCode());
         profileEntity.setBirthdayDate(profile.getBirthdayDate());
-        profileEntity.setPassword(profile.getPassword());
+        profileEntity.setPassword(passwordEncoder.encode(profile.getPassword()));
     }
 
     private void sanitizeFields(Profile profile) {

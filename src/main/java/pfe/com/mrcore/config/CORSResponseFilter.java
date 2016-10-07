@@ -14,12 +14,15 @@ import java.io.IOException;
 @Component
 public class CORSResponseFilter implements ContainerResponseFilter {
 
+    @Value("${spring.environments.local.clientUrl}")
+    private String clientUrl;
+
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 
         MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 
-        headers.add("Access-Control-Allow-Origin", "http://localhost:8000");
-        headers.add("Access-Control-Allow-Credential", "true");
+        headers.add("Access-Control-Allow-Origin", clientUrl);
+        headers.add("Access-Control-Allow-Credential", "clienturl");
         headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
     }

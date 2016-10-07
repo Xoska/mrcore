@@ -1,8 +1,9 @@
 package pfe.com.mrcore.clientapi.dto.chat;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Search {
+public class Search implements Serializable {
 
     private Integer idSex;
     private Integer idGoal;

@@ -1,6 +1,8 @@
 package pfe.com.mrcore;
 
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pfe.com.mrcore.config.JerseyInitialization;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -20,14 +22,5 @@ public class MrCoreApplication {
 	public static void main(String[] args) {
 
 		new SpringApplicationBuilder(MrCoreApplication.class).run(args);
-	}
-
-	@Bean
-	public ServletRegistrationBean jerseyServlet() {
-
-		ServletRegistrationBean registration = new ServletRegistrationBean(new ServletContainer(), "/*");
-		registration.addInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, JerseyInitialization.class.getName());
-
-		return registration;
 	}
 }

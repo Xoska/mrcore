@@ -54,10 +54,11 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
         try {
 
             Date now = new Date();
-            long hoursDifference = dateCalculator.getDateDifference(now, sessionEntity.getLastActionDate(), TimeUnit.HOURS);
+            long hoursDifference = dateCalculator.getDateDifference(sessionEntity.getLastActionDate(), now, TimeUnit.HOURS);
 
             if (hoursDifference > 2) {
 
+                sessionRepository.delete(sessionEntity);
                 throw new CustomWebExceptionHandler(Response.Status.UNAUTHORIZED, "SESSION_EXPIRED");
             }
             else {
@@ -94,7 +95,7 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
             @Override
             public String getAuthenticationScheme() {
 
-                return "custom";
+                return SecurityContext.BASIC_AUTH;
             }
         });
     }

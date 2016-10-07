@@ -7,10 +7,8 @@ import pfe.com.mrcore.core.utils.RequiresAuthentication;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Path("/profile")
@@ -38,8 +36,7 @@ public interface ProfileAPIService {
     @Path("/{id_profile}")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response delete(@Context SecurityContext session,
-                    @PathParam("id_profile") Integer idProfile);
+    Response delete(@PathParam("id_profile") Integer idProfile);
 
     @GET
     @Path("/goals")

@@ -4,14 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pfe.com.mrcore.core.model.chat.QueueEntity;
-import pfe.com.mrcore.core.model.profile.GoalEntity;
 
 import java.util.List;
 
 public interface QueueRepository extends JpaRepository<QueueEntity, Integer> {
 
     Integer countByIdProfile(Integer idProfile);
-    QueueEntity deleteByIdProfile(Integer idProfile);
+    void deleteByIdProfile(Integer idProfile);
 
     @Query("  SELECT q FROM QueueEntity q WHERE " +
             " (0 in (:idsCitySearch) OR q.idCity in (:idsCitySearch)) AND " +

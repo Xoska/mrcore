@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileRepository extends JpaRepository<ProfileEntity, Integer> {
 
-    ProfileEntity findByUsernameAndPassword(String username, String password);
+    ProfileEntity findByUsername(String username);
     Integer countByUsername(String username);
 }

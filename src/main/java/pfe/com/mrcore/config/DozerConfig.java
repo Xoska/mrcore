@@ -9,14 +9,12 @@ import pfe.com.mrcore.clientapi.dto.geoLocation.City;
 import pfe.com.mrcore.clientapi.dto.geoLocation.Country;
 import pfe.com.mrcore.clientapi.dto.geoLocation.State;
 import pfe.com.mrcore.clientapi.dto.profile.Goal;
-import pfe.com.mrcore.clientapi.dto.profile.Profile;
 import pfe.com.mrcore.clientapi.dto.profile.Role;
 import pfe.com.mrcore.clientapi.dto.profile.Sex;
 import pfe.com.mrcore.core.model.geoLocation.CityEntity;
 import pfe.com.mrcore.core.model.geoLocation.CountryEntity;
 import pfe.com.mrcore.core.model.geoLocation.StateEntity;
 import pfe.com.mrcore.core.model.profile.GoalEntity;
-import pfe.com.mrcore.core.model.profile.ProfileEntity;
 import pfe.com.mrcore.core.model.profile.RoleEntity;
 import pfe.com.mrcore.core.model.profile.SexEntity;
 

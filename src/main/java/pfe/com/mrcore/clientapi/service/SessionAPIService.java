@@ -6,10 +6,8 @@ import pfe.com.mrcore.core.utils.RequiresAuthentication;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 @Path("/session")
 @Produces(MediaType.APPLICATION_JSON)
@@ -20,9 +18,9 @@ public interface SessionAPIService {
     @Path("/login")
     Session login(Credential credential);
 
-    @POST
+    @GET
     @Path("/logout")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response logout(@Context SecurityContext session);
+    Response logout(@QueryParam("id_profile") Integer idProfile);
 }

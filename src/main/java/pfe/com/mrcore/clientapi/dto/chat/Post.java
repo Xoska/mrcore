@@ -1,8 +1,9 @@
 package pfe.com.mrcore.clientapi.dto.chat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Post {
+public class Post implements Serializable {
 
     private Integer idPost;
     private Integer idProfile;

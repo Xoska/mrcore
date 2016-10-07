@@ -9,10 +9,8 @@ import pfe.com.mrcore.core.utils.RequiresAuthentication;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 @Path("/chat")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,17 +33,14 @@ public interface ChatAPIService {
                          @QueryParam("id_profile") Integer idProfile);
 
     @DELETE
-    @Path("/leave/{id_room}")
+    @Path("/leave")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response leaveRoom(@Context SecurityContext session,
-                       @PathParam("id_room") String idRoom);
+    Response removeFromQueue(@QueryParam("id_profile") Integer idProfile);
 
 
     @POST
     @Path("/post/{id_room}")
-    @RequiresAuthentication
-    @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
     void post(@PathParam("id_room") String idRoom,
               Post post);
 

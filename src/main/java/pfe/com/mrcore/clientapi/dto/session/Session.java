@@ -1,9 +1,10 @@
 package pfe.com.mrcore.clientapi.dto.session;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
 
-public class Session implements Principal {
+public class Session implements Principal, Serializable {
 
     private String name;
     private Integer idProfile;
