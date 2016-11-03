@@ -40,6 +40,9 @@ public class QueueEntity {
     @Column(name = "zip_code")
     private String zipCode;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "id_sex")
     private Integer idSex;
 
@@ -198,5 +201,13 @@ public class QueueEntity {
 
     public void setIdStateSearch(Integer idStateSearch) {
         this.idStateSearch = idStateSearch;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

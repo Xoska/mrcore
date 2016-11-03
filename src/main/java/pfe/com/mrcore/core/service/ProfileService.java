@@ -57,7 +57,7 @@ public class ProfileService implements ProfileAPIService {
 
     private final static Logger logger = Logger.getLogger(ProfileService.class);
 
-    private final static Integer LENGTH_VARCHAR = 128;
+    private final static Integer LENGTH_VARCHAR = 64;
 
     @Override
     @Transactional
@@ -68,6 +68,11 @@ public class ProfileService implements ProfileAPIService {
         if (profileRepository.countByUsername(profile.getUsername()) > 0) {
 
             throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "USERNAME_ALREADY_EXIST");
+        }
+
+        if (!validateProfile(profile)) {
+
+            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "PROFILE_INVALID");
         }
 
         try {
@@ -206,7 +211,11 @@ public class ProfileService implements ProfileAPIService {
         profileEntity.setLastName(profile.getLastName());
         profileEntity.setZipCode(profile.getZipCode());
         profileEntity.setBirthdayDate(profile.getBirthdayDate());
-        profileEntity.setPassword(passwordEncoder.encode(profile.getPassword()));
+
+        if (!profile.getPassword().isEmpty()) {
+
+            profileEntity.setPassword(passwordEncoder.encode(profile.getPassword()));
+        }
     }
 
     private void sanitizeFields(Profile profile) {

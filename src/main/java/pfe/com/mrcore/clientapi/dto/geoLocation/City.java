@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class City implements Serializable {
 
     private Integer idCity;
-    private State state;
+    private Integer idState;
     private String name;
 
     public Integer getIdCity() {
@@ -16,12 +16,12 @@ public class City implements Serializable {
         this.idCity = idCity;
     }
 
-    public State getState() {
-        return state;
+    public Integer getIdState() {
+        return idState;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setIdState(Integer idState) {
+        this.idState = idState;
     }
 
     public String getName() {

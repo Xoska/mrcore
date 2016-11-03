@@ -7,6 +7,7 @@ public class Room implements Serializable {
 
     private String idRoom;
     private Date enteredDate;
+    private String owner;
 
     public String getIdRoom() {
         return idRoom;
@@ -22,5 +23,13 @@ public class Room implements Serializable {
 
     public void setEnteredDate(Date enteredDate) {
         this.enteredDate = enteredDate;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

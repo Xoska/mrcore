@@ -8,5 +8,4 @@ import java.util.List;
 public interface SessionRepository extends JpaRepository<SessionEntity, String> {
 
     SessionEntity findByIdProfile(Integer idProfile);
-    void deleteByIdProfile(Integer idProfile);
 }

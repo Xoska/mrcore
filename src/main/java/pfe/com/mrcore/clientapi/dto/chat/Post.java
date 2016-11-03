@@ -7,8 +7,9 @@ public class Post implements Serializable {
 
     private Integer idPost;
     private Integer idProfile;
-    private Date date;
     private String content;
+    private String username;
+    private String typePost;
 
     public Integer getIdPost() {
         return idPost;
@@ -34,11 +35,19 @@ public class Post implements Serializable {
         this.idProfile = idProfile;
     }
 
-    public Date getDate() {
-        return date;
+    public String getUsername() {
+        return username;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getTypePost() {
+        return typePost;
+    }
+
+    public void setTypePost(String typePost) {
+        this.typePost = typePost;
     }
 }

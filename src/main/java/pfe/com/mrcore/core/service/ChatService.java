@@ -69,10 +69,12 @@ public class ChatService implements ChatAPIService {
 
 
             String idRoom;
+            String owner;
 
             if (queueEntities.isEmpty()) {
 
                 idRoom = identifierGenerator.nextId(6);
+                owner = profileEntity.getUsername();
 
                 queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
             }
@@ -80,12 +82,13 @@ public class ChatService implements ChatAPIService {
 
                 QueueEntity queueEntityPriority = queueEntities.get(0);
                 idRoom = queueEntityPriority.getIdRoom();
+                owner = queueEntityPriority.getUsername();
 
                 queueRepository.delete(queueEntityPriority);
             }
 
             registerRoom(idRoom);
-            return buildRoom(idRoom);
+            return buildRoom(idRoom, owner);
         } catch (Exception e) {
 
             logger.error(String.format("Error while searching for match with profile [%s]", idProfile), e);
@@ -114,15 +117,19 @@ public class ChatService implements ChatAPIService {
     }
 
     @Override
-    public Response removeFromQueue(Integer idProfile) {
+    public Response leaveRoom(String idRoom) {
 
         try {
 
-            queueRepository.deleteByIdProfile(idProfile);
+            if (ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
+
+                ROOM_SSE_BROADCASTER.remove(idRoom);
+            }
+
             return Response.accepted().build();
         } catch (Exception e) {
 
-            logger.error(String.format("Error while removing profile [%s] from queue", idProfile), e);
+            logger.error(String.format("Error while removing room [%s] from SSE map", idRoom), e);
         }
 
         return Response.serverError().build();
@@ -142,6 +149,20 @@ public class ChatService implements ChatAPIService {
         }
     }
 
+    public void removeFromQueue(Integer idProfile) {
+
+        try {
+
+            if (queueRepository.countByIdProfile(idProfile) > 0) {
+
+                queueRepository.deleteByIdProfile(idProfile);
+            }
+        } catch (Exception e) {
+
+            logger.error(String.format("Error while removing profile [%s] from queue", idProfile), e);
+        }
+    }
+
     private void registerRoom(String idRoom) {
 
         ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
@@ -157,6 +178,7 @@ public class ChatService implements ChatAPIService {
         queueEntity.setIdState(profileEntity.getIdState());
         queueEntity.setZipCode(profileEntity.getZipCode());
         queueEntity.setIdSex(profileEntity.getIdSex());
+        queueEntity.setUsername(profileEntity.getUsername());
         queueEntity.setAge(dateCalculator.getAge(profileEntity.getBirthdayDate()));
 
         queueEntity.setIdsCitySearch(search.getIdsCity());
@@ -183,12 +205,13 @@ public class ChatService implements ChatAPIService {
                 .build();
     }
 
-    private Room buildRoom(String identifier) {
+    private Room buildRoom(String identifier, String owner) {
 
         Room room = new Room();
 
         room.setIdRoom(identifier);
         room.setEnteredDate(new Date());
+        room.setOwner(owner);
 
         return room;
     }

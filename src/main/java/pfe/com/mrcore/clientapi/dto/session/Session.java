@@ -7,6 +7,7 @@ import java.util.Date;
 public class Session implements Principal, Serializable {
 
     private String name;
+    private String username;
     private Integer idProfile;
     private String role;
     private Date creationDate;
@@ -50,5 +51,13 @@ public class Session implements Principal, Serializable {
 
     public void setLastActionDate(Date lastActionDate) {
         this.lastActionDate = lastActionDate;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

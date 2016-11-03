@@ -11,6 +11,9 @@ public class SessionEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "id_profile")
     private Integer idProfile;
 
@@ -61,5 +64,13 @@ public class SessionEntity {
 
     public void setLastActionDate(Date lastActionDate) {
         this.lastActionDate = lastActionDate;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

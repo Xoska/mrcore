@@ -14,6 +14,7 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
@@ -40,14 +41,14 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        Map<String, Cookie> cookies = requestContext.getCookies();
+        String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-        if (!cookies.containsKey("token")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 
             throw new CustomWebExceptionHandler(Response.Status.UNAUTHORIZED, "SESSION_INVALID");
         }
 
-        String idSession = cookies.get("token").getValue();
+        String idSession = authorizationHeader.substring("Bearer".length()).trim();
 
         SessionEntity sessionEntity = sessionRepository.findOne(idSession);
 

@@ -32,17 +32,14 @@ public interface ChatAPIService {
     EventOutput joinRoom(@PathParam("id_room") String roomId,
                          @QueryParam("id_profile") Integer idProfile);
 
-    @DELETE
-    @Path("/leave")
+    @GET
+    @Path("/leave/{id_room}")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response removeFromQueue(@QueryParam("id_profile") Integer idProfile);
-
+    Response leaveRoom(@PathParam("id_room") String idRoom);
 
     @POST
     @Path("/post/{id_room}")
     void post(@PathParam("id_room") String idRoom,
               Post post);
-
-
 }

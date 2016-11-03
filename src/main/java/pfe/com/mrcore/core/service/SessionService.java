@@ -79,7 +79,12 @@ public class SessionService implements SessionAPIService {
 
         try {
 
-            sessionRepository.deleteByIdProfile(idProfile);
+            SessionEntity sessionEntity = sessionRepository.findByIdProfile(idProfile);
+
+            if (sessionEntity != null) {
+
+                sessionRepository.delete(sessionEntity);
+            }
 
             return Response.accepted().build();
         } catch (Exception e) {
@@ -95,6 +100,7 @@ public class SessionService implements SessionAPIService {
         SessionEntity sessionEntity = new SessionEntity();
 
         sessionEntity.setName(identifierGenerator.nextId(32));
+        sessionEntity.setUsername(profileEntity.getUsername());
         sessionEntity.setIdProfile(profileEntity.getIdProfile());
         sessionEntity.setRole(profileEntity.getRole());
         sessionEntity.setCreationDate(new Date());
