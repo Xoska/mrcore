@@ -8,6 +8,7 @@ import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 import pfe.com.mrcore.clientapi.dto.chat.Post;
 import pfe.com.mrcore.clientapi.dto.chat.Room;
 import pfe.com.mrcore.clientapi.dto.chat.Search;
@@ -76,7 +77,7 @@ public class ChatService implements ChatAPIService {
                 idRoom = identifierGenerator.nextId(32);
                 owner = profileEntity.getUsername();
 
-                queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
+      //          queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
             }
             else {
 
@@ -98,7 +99,7 @@ public class ChatService implements ChatAPIService {
     }
 
     @Override
-    public EventOutput joinRoom(String idRoom, Integer idProfile) {
+    public @ResponseBody EventOutput joinRoom(String idRoom) {
 
         try {
 
@@ -108,7 +109,7 @@ public class ChatService implements ChatAPIService {
             return eventOutput;
         } catch (Exception e) {
 
-            logger.error(String.format("Error while joining room with profile [%s]", idProfile), e);
+            logger.error(String.format("Error while joining room [%s]", idRoom), e);
         }
 
         return null;
@@ -199,7 +200,7 @@ public class ChatService implements ChatAPIService {
 
         OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 
-        return eventBuilder.name("post")
+        return eventBuilder.name("message")
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
                 .data(Post.class, post)
                 .build();

@@ -2,6 +2,7 @@ package pfe.com.mrcore.clientapi.service;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
+import org.springframework.web.bind.annotation.ResponseBody;
 import pfe.com.mrcore.clientapi.dto.chat.Post;
 import pfe.com.mrcore.clientapi.dto.chat.Room;
 import pfe.com.mrcore.clientapi.dto.chat.Search;
@@ -27,10 +28,8 @@ public interface ChatAPIService {
     @GET
     @Path("/join/{id_room}")
     @Produces(SseFeature.SERVER_SENT_EVENTS)
-    @RequiresAuthentication
-    @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    EventOutput joinRoom(@PathParam("id_room") String roomId,
-                         @QueryParam("id_profile") Integer idProfile);
+    @ResponseBody
+    EventOutput joinRoom(@PathParam("id_room") String roomId);
 
     @GET
     @Path("/leave/{id_room}")
