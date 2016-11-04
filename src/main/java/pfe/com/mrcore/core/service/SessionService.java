@@ -56,6 +56,9 @@ public class SessionService implements SessionAPIService {
 
                 if (sessionEntity != null) {
 
+                    sessionEntity.setLastActionDate(new Date());
+                    sessionRepository.save(sessionEntity);
+
                     return mapper.map(sessionEntity, Session.class);
                 }
 

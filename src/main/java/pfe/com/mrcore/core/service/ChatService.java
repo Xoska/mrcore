@@ -73,7 +73,7 @@ public class ChatService implements ChatAPIService {
 
             if (queueEntities.isEmpty()) {
 
-                idRoom = identifierGenerator.nextId(6);
+                idRoom = identifierGenerator.nextId(32);
                 owner = profileEntity.getUsername();
 
                 queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
@@ -102,8 +102,6 @@ public class ChatService implements ChatAPIService {
 
         try {
 
-            removeFromQueue(idProfile);
-
             EventOutput eventOutput = new EventOutput();
             ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
 
@@ -117,9 +115,11 @@ public class ChatService implements ChatAPIService {
     }
 
     @Override
-    public Response leaveRoom(String idRoom) {
+    public Response leaveRoom(String idRoom, Integer idProfile) {
 
         try {
+
+            removeFromQueue(idProfile);
 
             if (ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
 

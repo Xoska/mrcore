@@ -18,10 +18,10 @@ import javax.ws.rs.core.Response;
 public interface ChatAPIService {
 
     @POST
-    @Path("/search")
+    @Path("/search/{id_profile}")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Room search(@QueryParam("id_profile") Integer idProfile,
+    Room search(@PathParam("id_profile") Integer idProfile,
                 Search search);
 
     @GET
@@ -36,7 +36,8 @@ public interface ChatAPIService {
     @Path("/leave/{id_room}")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response leaveRoom(@PathParam("id_room") String idRoom);
+    Response leaveRoom(@PathParam("id_room") String idRoom,
+                       @QueryParam("id_profile") Integer idProfile);
 
     @POST
     @Path("/post/{id_room}")

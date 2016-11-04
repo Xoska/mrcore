@@ -14,7 +14,7 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Integer> {
 
     @Query("  SELECT q FROM QueueEntity q WHERE " +
             " (0 in (:idsCitySearch) OR q.idCity in (:idsCitySearch)) AND " +
-            " (0 in elements(q.idsCitySearch) OR :idCity in elements(q.idsCitySearch)) AND " +
+            " (0 in elements(q.idsCitySearch) OR :idCity in elements(q.idsCitySearch)) AND" +
             " (:idCountrySearch = 0 OR q.idCountry = :idCountrySearch) AND " +
             " (q.idCountrySearch = 0 OR q.idCountrySearch = :idCountry) AND " +
             " (:idStateSearch = 0 OR q.idState = :idStateSearch) AND " +

@@ -212,7 +212,7 @@ public class ProfileService implements ProfileAPIService {
         profileEntity.setZipCode(profile.getZipCode());
         profileEntity.setBirthdayDate(profile.getBirthdayDate());
 
-        if (!profile.getPassword().isEmpty()) {
+        if (profile.getPassword() != null && !profile.getPassword().isEmpty()) {
 
             profileEntity.setPassword(passwordEncoder.encode(profile.getPassword()));
         }
@@ -221,7 +221,7 @@ public class ProfileService implements ProfileAPIService {
     private void sanitizeFields(Profile profile) {
 
         profile.setZipCode(inputSanitizer.cleanUnsafeString(profile.getZipCode()));
-        profile.setFirstName(inputSanitizer.cleanUnsafeString(profile.getLastName()));
+        profile.setFirstName(inputSanitizer.cleanUnsafeString(profile.getFirstName()));
         profile.setLastName(inputSanitizer.cleanUnsafeString(profile.getLastName()));
         profile.setEmail(inputSanitizer.cleanUnsafeString(profile.getEmail()));
         profile.setUsername(inputSanitizer.cleanUnsafeString(profile.getUsername()));
