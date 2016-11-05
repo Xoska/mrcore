@@ -54,10 +54,10 @@ public class ChatService implements ChatAPIService {
     @Transactional
     public Room search(Integer idProfile, Search search) {
 
-        if (queueRepository.countByIdProfile(idProfile) > 0) {
+        Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
+        Validate.notNull(search, "Missing mandatory parameter [search]");
 
-            throw new CustomWebExceptionHandler(Response.Status.PRECONDITION_FAILED, "PROFILE_ALREADY_QUEUED");
-        }
+        removeFromQueue(idProfile);
 
         try {
 
@@ -77,7 +77,7 @@ public class ChatService implements ChatAPIService {
                 idRoom = identifierGenerator.nextId(32);
                 owner = profileEntity.getUsername();
 
-      //          queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
+                queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
             }
             else {
 
@@ -116,7 +116,11 @@ public class ChatService implements ChatAPIService {
     }
 
     @Override
+    @Transactional
     public Response leaveRoom(String idRoom, Integer idProfile) {
+
+        Validate.notNull(idRoom, "Missing mandatory parameter [idRoom]");
+        Validate.notNull(idProfile, "Missing mandatory parameter [idProfile]");
 
         try {
 

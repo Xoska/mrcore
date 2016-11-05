@@ -33,8 +33,6 @@ public interface ChatAPIService {
 
     @GET
     @Path("/leave/{id_room}")
-    @RequiresAuthentication
-    @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
     Response leaveRoom(@PathParam("id_room") String idRoom,
                        @QueryParam("id_profile") Integer idProfile);
 

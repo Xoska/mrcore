@@ -19,8 +19,8 @@ public interface SessionAPIService {
     Session login(Credential credential);
 
     @GET
-    @Path("/logout")
+    @Path("/logout/{id_profile}")
     @RequiresAuthentication
     @RolesAllowed({"MEMBER", "PRIVILEGED_MEMBER", "ADMINISTRATOR"})
-    Response logout(@QueryParam("id_profile") Integer idProfile);
+    Response logout(@PathParam("id_profile") Integer idProfile);
 }
