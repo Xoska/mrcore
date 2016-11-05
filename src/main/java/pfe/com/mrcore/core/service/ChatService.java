@@ -174,9 +174,15 @@ public class ChatService implements ChatAPIService {
 
     private void registerRoom(String idRoom) {
 
-        if (!ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
+        try {
 
-            ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
+            if (!ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
+
+                ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
+            }
+        } catch (Exception e) {
+
+            logger.error(String.format("Error while adding a room [%s] to the broadcaster", idRoom), e);
         }
     }
 
