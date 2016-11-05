@@ -32,9 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatService implements ChatAPIService {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private QueueRepository queueRepository;
 
     @Autowired
@@ -68,7 +65,6 @@ public class ChatService implements ChatAPIService {
                     search.getIdSex(), profileEntity.getIdSex(), search.getIdGoal(), search.getAgeMin(), search.getAgeMax(),
                     dateCalculator.getAge(profileEntity.getBirthdayDate()));
 
-
             String idRoom;
             String owner;
 
@@ -78,6 +74,8 @@ public class ChatService implements ChatAPIService {
                 owner = profileEntity.getUsername();
 
                 queueRepository.save(buildQueueEntity(idRoom, profileEntity, search));
+
+                registerRoom(idRoom);
             }
             else {
 
@@ -88,7 +86,6 @@ public class ChatService implements ChatAPIService {
                 queueRepository.delete(queueEntityPriority);
             }
 
-            registerRoom(idRoom);
             return buildRoom(idRoom, owner);
         } catch (Exception e) {
 
@@ -103,10 +100,13 @@ public class ChatService implements ChatAPIService {
 
         try {
 
-            EventOutput eventOutput = new EventOutput();
-            ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
+            if (ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
 
-            return eventOutput;
+                EventOutput eventOutput = new EventOutput();
+                ROOM_SSE_BROADCASTER.get(idRoom).add(eventOutput);
+
+                return eventOutput;
+            }
         } catch (Exception e) {
 
             logger.error(String.format("Error while joining room [%s]", idRoom), e);
@@ -147,7 +147,11 @@ public class ChatService implements ChatAPIService {
 
         try {
 
-            ROOM_SSE_BROADCASTER.get(idRoom).broadcast(buildEvent(post));
+            if (ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
+
+                ROOM_SSE_BROADCASTER.get(idRoom).broadcast(buildEvent(post));
+            }
+
         } catch (Exception e) {
 
             logger.error(String.format("Error while posting with profile [%s]", post.getIdProfile()), e);
@@ -170,7 +174,10 @@ public class ChatService implements ChatAPIService {
 
     private void registerRoom(String idRoom) {
 
-        ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
+        if (!ROOM_SSE_BROADCASTER.containsKey(idRoom)) {
+
+            ROOM_SSE_BROADCASTER.put(idRoom, new SseBroadcaster());
+        }
     }
 
     private QueueEntity buildQueueEntity(String idRoom, ProfileEntity profileEntity, Search search) {
